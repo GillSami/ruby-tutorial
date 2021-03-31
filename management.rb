@@ -28,10 +28,10 @@ end
 
 def welcome_msg
   # Welcomes new user and get the user data (and later insert it to a user data json file).
-  print 'Hello! Please enter your name:'
+  print 'Hello! Please enter your name: '
   name = gets.chomp
 
-  print 'Please enter your budget (numbers only):'
+  print 'Please enter your budget (numbers only): '
   budget = Float(gets.chomp) rescue false
   until budget
     print "Wrong input. Please use digit only to enter your budget:\n"
@@ -74,7 +74,7 @@ def manage_sub_menu(user_choice)
     update_budget(-1)
 
   elsif user_choice.to_i == 3
-    puts 'Please enter a search term'
+    print 'Please enter a search term: '
     search_term = gets.chomp
     list_records(search_term)
 
