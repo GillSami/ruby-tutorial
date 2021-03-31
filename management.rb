@@ -1,4 +1,5 @@
 require 'json'
+
 SLEEP_TIME = 3
 MAIN_MENU_MSG = 'Choose a number between 1-4 for the following actions:
 1) New income
