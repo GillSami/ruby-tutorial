@@ -1,4 +1,5 @@
 require 'json'
+SLEEP_TIME = 3
 
 def welcome_msg
   # Welcomes new user and get the user data (and later insert it to a user data json file).
@@ -122,14 +123,37 @@ def update_budget(add_or_sub)
   update_budget_to_json(amount * add_or_sub)
 
   # Update records
-  if add_or_sub == 1
-    type = "income"
-  else
-    type = "expanse"
-  end
+  type = add_or_sub == 1 ? "income" : "expanse"
   update_records(type, amount, description)
+  puts "Great! your #{type} is registered and recorded!"
+end
 
-  # Redirect to main menu
+def list_records(search_term = "",file_name = 'records.json')
+  records = []
+  data_hash = Hash.new
+
+  if File.file?(file_name)
+    file = File.read(file_name)
+    data_hash = JSON.parse(file)
+    records = data_hash["records"]
+  end
+
+  record_counter = 0
+
+  record_descriptions = ""
+  records.each do |record|
+    if record["description"].include? search_term
+      sign = record["type"] == "income" ?  "+" : "-"
+      record_descriptions += "#{record['description']} | #{sign}#{record['amount']}$\n"
+      record_counter += 1
+    end
+  end
+
+  search_term = "for \"#{search_term}\"" if search_term != ""
+  print "
+Found #{record_counter} records #{search_term}:
+-------------------------------
+#{record_descriptions}"
 end
 
 def manage_sub_menu(user_choice)
@@ -143,12 +167,26 @@ def manage_sub_menu(user_choice)
     update_budget(1)
 
   elsif user_choice.to_i == 2
-    print "Adding new expanse.\n Please insert the amount. You can also add an expanse description:\n"
+    print "Adding new expanse. Please insert the amount. You can also add an expanse description:\n"
     update_budget(-1)
+
+  elsif user_choice.to_i == 3
+    puts "Please enter a search term"
+    search_term = gets.chomp
+    list_records(search_term)
+
+  elsif user_choice.to_i == 4
+    list_records
   end
+
+  sleep(SLEEP_TIME)
+  puts "\n"
+  main_menu
+
 end
 
 
 # welcome_msg
 # print_hello_msg
 main_menu
+# list_records
