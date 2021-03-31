@@ -63,6 +63,7 @@ def main_menu
 end
 
 def manage_sub_menu(user_choice)
+  # Manage the sub menus according to the user's choice
   check_aborting_program(user_choice)
 
   if user_choice == 'menu'
@@ -76,7 +77,7 @@ def manage_sub_menu(user_choice)
 
   elsif user_choice.to_i == 3
     print 'Please enter a search term: '
-    search_term = gets.chomp
+    search_term = get_user_input
     list_records(search_term)
 
   elsif user_choice.to_i == 4
@@ -105,12 +106,14 @@ def update_budget_in_json(budget)
 end
 
 def check_aborting_program(user_choice)
+  # If the user inserted `exit`, aborting the program.
   abort('Bye Bye!') if user_choice == 'exit'
 end
 
 def extract_main_menu_choice
-  user_choice = gets.chomp
-  check_aborting_program(user_choice)
+  # Helper function to extract the user's choice and check whether it is a menu option (an integer)
+  # or a string (Options are main menu or exit)
+  user_choice = get_user_input
   is_number = Integer(user_choice) rescue false
   [user_choice, is_number]
 end
@@ -163,15 +166,24 @@ def update_records(type, amount, description = 'None', filename = 'records.json'
   write_to_file(filename, data_hash)
 end
 
+def get_user_input
+  # Helper function to get user input. if the user chose menu or exit, handle the request.
+  user_input = gets.chomp
+
+  check_aborting_program(user_input)
+  main_menu if user_input == 'menu'
+
+  user_input
+end
+
 def update_budget(add_or_sub)
   type = add_or_sub == 1 ? 'income' : 'expanse'
-  print "Adding new #{type}. Please insert the amount. You can also add an expanse description:\n"
-  user_input = gets.chomp
+  print "Adding new #{type}. Please insert the amount. You can also add a description:\n"
+  user_input = get_user_input
   user_input = user_input.split(' ')
 
   amount = user_input[0].to_f
-  description = 'None'
-  description = user_input[1..-1].join(' ') if user_input.length > 1
+  description = user_input.length > 1 ? user_input[1..-1].join(' ') : ''
 
   # Update new balance
   update_budget_in_json(amount * add_or_sub)
